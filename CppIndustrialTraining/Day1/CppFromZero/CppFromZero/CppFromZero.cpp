@@ -1,9 +1,11 @@
 ﻿#include <iostream>
 #include <string>
-#include <iomanip> // Для форматирования
+#include <iomanip> 
+#include <windows.h> 
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(1251);         
+    SetConsoleOutputCP(1251);
 
     std::string equipment_name = "Насос_Главный";  
     float temperature = 25.5f;                     
@@ -18,8 +20,19 @@ int main() {
     std::cout << "====================================================\n";
     std::cout << "              СИСТЕМА МОНИТОРИНГА\n";
     std::cout << "====================================================\n";
-
-    std::cout << "Оборудование:    " << std::left << std::setw(15) << equipment_name << "\n";
+    std::cout << "Введите название оборудования: ";
+    std::getline(std::cin, equipment_name);
+    std::cout << "Введите значение температуры: ";
+    std::cin >> temperature;
+    std::cout << "Введите значение давления: ";
+    std::cin >> pressure;
+    std::cout << "Введите значение влажности: ";
+    std::cin >> humidity;
+    std::cout << "Введите значение напряжения: ";
+    std::cin >> voltage;
+    std::cout << "Введите значение наработки: ";
+    std::cin >> operating_hours;
+    std::cout << "\nОборудование:    " << std::left << std::setw(15) << equipment_name << "\n";
     std::cout << "Температура      " << std::left << std::setw(15) << temperature << " °C\n";
     std::cout << "Давление:        " << std::left << std::setw(15) << pressure << " бар\n";
     std::cout << "Состояние:       " << std::left << std::setw(15) << (is_running ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n";
