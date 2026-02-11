@@ -1,7 +1,9 @@
-﻿#include <iostream>
+﻿#define NOMINMAX
+#include <iostream>
 #include <string>
 #include <iomanip> 
 #include <windows.h> 
+#include <limits>
 
 int main() {
     SetConsoleCP(1251);         
@@ -12,8 +14,9 @@ int main() {
     int pressure = 100;       
     float vibration = 75.3;
     int moto_hours = 500;
-    bool state_filter = true;
-    bool is_running = true;  
+    int filter_input;
+    bool state_filter;
+    bool is_running;  
  
     int warnings = 0;
     int alarms = 0;
@@ -23,27 +26,41 @@ int main() {
     std::cout << "====================================================\n";
     std::cout << "\nВведите название оборудования: ";
     std::getline(std::cin, equipment_name);
+    // Ввод значений
     std::cout << "Введите значение температуры масла: ";
-    std::cin >> temperature;
+    while (!(std::cin >> temperature)) {
+        std::cout << "Ошибка! Введите число: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
     std::cout << "Введите значение давления воздуха: ";
-    std::cin >> pressure;
+    while (!(std::cin >> pressure)) {
+        std::cout << "Ошибка! Введите число: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
     std::cout << "Введите значение уровня вибрации: ";
-    std::cin >> vibration;
+    while (!(std::cin >> vibration)) {
+        std::cout << "Ошибка! Введите число: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
     std::cout << "Введите значение моточасов: ";
-    std::cin >> moto_hours;
-
+    while (!(std::cin >> moto_hours)) {
+        std::cout << "Ошибка! Введите число: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    std::cout << "Введите значение состояния фильтра: ";
+    while (!(std::cin >> filter_input) || (filter_input != 0 && filter_input != 1)) {
+        std::cout << "Ошибка! Введите число 0 - Загрязнён или 1 - Чистый): ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    state_filter = (filter_input == 1);
     // Очистка буфера
     std::cin.ignore(1000, '\n');
-    
-    std::cout << std::left
-        << std::setw(25) << "\nОборудование:" << std::setw(10) << equipment_name << "\n"
-        << std::setw(25) << "Состояние установки:" << std::setw(10) << (is_running ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n"
-        << std::setw(25) << "Температура масла:" << std::setw(10) << temperature << " °C\n"
-        << std::setw(25) << "Давление воздуха:" << std::setw(10) << pressure << " бар\n"
-        << std::setw(25) << "Уровень вибраций:" << std::setw(10) << vibration << " мм/с\n"
-        << std::setw(25) << "Моточасы:" << std::setw(10) << moto_hours << " ч\n"
-        << std::setw(25) << "Состояние фильтра:" << std::setw(10) << (state_filter ? "ЧИСТЫЙ" : "ЗАГРЯЗНЁН") << "\n"; 
-    
+
     // Температура масла
     if (temperature <= 35 || temperature >= 70) {
         std::cout << "\n! АВАРИЯ: Критическое значения температуры!\n";
@@ -54,26 +71,26 @@ int main() {
         warnings++;
     }
     else {
-        std::cout << "\nТемпература в норме\n";
+        std::cout << "\nТемпература в норме\n"; // 40-60 °C
     }
     // Давление воздуха
-    if (pressure <= 5 || pressure >= 9) {
-        std::cout << "! АВАРИЯ: Критически высокое давление!\n";
+    if (pressure < 5 || pressure > 9) {
+        std::cout << "! АВАРИЯ: Критическое давление!\n";
         alarms++;
     }
-    else if ((pressure > 5 && pressure < 6) || (pressure > 8 && pressure < 9)) {
-        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Высокое давление!\n";
+    else if (pressure < 6 || pressure > 8) {
+        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Давление вне нормы!\n";
         warnings++;
     }
     else {
         std::cout << "Давление в норме\n";
     }
     // Уровень вибраций
-    if (vibration >= 6) {
+    if (vibration > 6) {
         std::cout << "! АВАРИЯ: Высокий уровень вибрации!\n";
         alarms++;
     }
-    else if (vibration > 4 && vibration < 6) {
+    else if (vibration > 4 && vibration <= 6) {
         std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Повышенный уровень вибрации!\n";
         warnings++;
     }
@@ -81,36 +98,46 @@ int main() {
         std::cout << "Уровень вибрации в норме\n";
     }
     // Моточасы
-    if (moto_hours >= 800) {
+    if (moto_hours > 800) {
         std::cout << "! АВАРИЯ: Необходимо ТО!\n";
         alarms++;
     }
-    else if (moto_hours > 500 && moto_hours < 800) {
+    else if (moto_hours >= 500) {
         std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Необходимо ТО!\n";
         warnings++;
     }
     else {
         std::cout << "Наработка в норме\n";
     }
-
-    std::cout << "\nКоличество предупреждений: " << std::left << std::setw(15) << warnings << "\n";
-    std::cout << "Количество аварий:         " << std::left << std::setw(15) << alarms << "\n";
+    // Состояние фильтра 
+    if (state_filter != 1) {
+        std::cout << "! АВАРИЯ: Фильтр загрязнён!\n";
+        alarms++;
+    }
+    is_running = (alarms == 0);
 
     if (alarms > 0) {
-        std::cout << "ОСТАНОВКА! Требуется вмешательство\n";
-        is_running = false;
+        std::cout << "\nОСТАНОВКА! Требуется вмешательство\n";
     }
     else if (alarms == 0 && warnings > 0) {
-        std::cout << "ВНИМАНИЕ! Плановое обслуживание\n";
-        is_running = false;
+        std::cout << "\nВНИМАНИЕ! Плановое обслуживание\n";
     }
     else {
-        std::cout << "НОРМАЛЬНАЯ РАБОТА\n";
+        std::cout << "\nНОРМАЛЬНАЯ РАБОТА\n";
     }
+    std::cout << "\nКоличество предупреждений: " << std::left << std::setw(15) << warnings << "\n";
+    std::cout << "Количество аварий:         " << std::left << std::setw(15) << alarms << "\n";
+    std::cout << std::left
+        << std::setw(30) << "\nОборудование:" << std::setw(20) << equipment_name << "\n"
+        << std::setw(30) << "Состояние установки:" << std::setw(20) << (is_running ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n"
+        << std::setw(30) << "Температура масла:" << std::setw(20) << temperature << " °C\n"
+        << std::setw(30) << "Давление воздуха:" << std::setw(20) << pressure << " бар\n"
+        << std::setw(30) << "Уровень вибраций:" << std::setw(20) << vibration << " мм/с\n"
+        << std::setw(30) << "Моточасы:" << std::setw(20) << moto_hours << " ч\n"
+        << std::setw(30) << "Состояние фильтра:" << std::setw(20) << (state_filter ? "ЧИСТЫЙ" : "ЗАГРЯЗНЁН") << "\n";
 
     std::cout << "\nПрограмма завершена.\n";
     std::cout << "Нажмите Enter для выхода...";
     std::cin.get();  
-
     return 0;
 }
