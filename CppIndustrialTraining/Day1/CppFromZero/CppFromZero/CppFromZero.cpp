@@ -9,90 +9,83 @@ int main() {
 
     std::string equipment_name = "Насос_Главный";  
     float temperature = 25.5f;                     
-    int pressure = 100;                            
+    int pressure = 100;       
+    float vibration = 75.3;
+    int moto_hours = 500;
+    bool state_filter = true;
     bool is_running = true;  
-    int humidity = 75;
-    float voltage = 380.0f;
-    int operating_hours = 500;
+ 
     int warnings = 0;
     int alarms = 0;
 
     std::cout << "====================================================\n";
-    std::cout << "              СИСТЕМА МОНИТОРИНГА\n";
+    std::cout << "    СИСТЕМА МОНИТОРИНГА КОМПРЕССОРНОЙ УСТАНОВКИ     \n";
     std::cout << "====================================================\n";
-    std::cout << "Введите название оборудования: ";
+    std::cout << "\nВведите название оборудования: ";
     std::getline(std::cin, equipment_name);
-    std::cout << "Введите значение температуры: ";
+    std::cout << "Введите значение температуры масла: ";
     std::cin >> temperature;
-    std::cout << "Введите значение давления: ";
+    std::cout << "Введите значение давления воздуха: ";
     std::cin >> pressure;
-    std::cout << "Введите значение влажности: ";
-    std::cin >> humidity;
-    std::cout << "Введите значение напряжения: ";
-    std::cin >> voltage;
-    std::cout << "Введите значение наработки: ";
-    std::cin >> operating_hours;
-    std::cout << "\nОборудование:    " << std::left << std::setw(15) << equipment_name << "\n";
-    std::cout << "Температура      " << std::left << std::setw(15) << temperature << " °C\n";
-    std::cout << "Давление:        " << std::left << std::setw(15) << pressure << " бар\n";
-    std::cout << "Состояние:       " << std::left << std::setw(15) << (is_running ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n";
-    std::cout << "Влажность:       " << std::left << std::setw(15) << humidity << " %\n";
-    std::cout << "Напряжение:      " << std::left << std::setw(15) << voltage << " В\n";
-    std::cout << "Наработка:       " << std::left << std::setw(15) << operating_hours << " ч\n";
-    // Температура
-    if (temperature > 40.0f) {
-        std::cout << "\n! АВАРИЯ: Критический перегрев оборудования!\n";
+    std::cout << "Введите значение уровня вибрации: ";
+    std::cin >> vibration;
+    std::cout << "Введите значение моточасов: ";
+    std::cin >> moto_hours;
+
+    // Очистка буфера
+    std::cin.ignore(1000, '\n');
+    
+    std::cout << std::left
+        << std::setw(25) << "\nОборудование:" << std::setw(10) << equipment_name << "\n"
+        << std::setw(25) << "Состояние установки:" << std::setw(10) << (is_running ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n"
+        << std::setw(25) << "Температура масла:" << std::setw(10) << temperature << " °C\n"
+        << std::setw(25) << "Давление воздуха:" << std::setw(10) << pressure << " бар\n"
+        << std::setw(25) << "Уровень вибраций:" << std::setw(10) << vibration << " мм/с\n"
+        << std::setw(25) << "Моточасы:" << std::setw(10) << moto_hours << " ч\n"
+        << std::setw(25) << "Состояние фильтра:" << std::setw(10) << (state_filter ? "ЧИСТЫЙ" : "ЗАГРЯЗНЁН") << "\n"; 
+    
+    // Температура масла
+    if (temperature <= 35 || temperature >= 70) {
+        std::cout << "\n! АВАРИЯ: Критическое значения температуры!\n";
         alarms++;
     }
-    else if (temperature > 30.0f) {
-        std::cout<< "\n! ПРЕДУПРЕЖДЕНИЕ: Перегрев оборудования!\n";
+    else if ((temperature > 60 && temperature < 70) || (temperature > 35  && temperature < 40)) {
+        std::cout<< "\n! ПРЕДУПРЕЖДЕНИЕ: Недопустимое значение температуры!\n";
         warnings++;
     }
     else {
         std::cout << "\nТемпература в норме\n";
     }
-    // Давление
-    if (pressure > 220) {
+    // Давление воздуха
+    if (pressure <= 5 || pressure >= 9) {
         std::cout << "! АВАРИЯ: Критически высокое давление!\n";
         alarms++;
     }
-    else if (pressure > 120) {
+    else if ((pressure > 5 && pressure < 6) || (pressure > 8 && pressure < 9)) {
         std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Высокое давление!\n";
         warnings++;
     }
     else {
         std::cout << "Давление в норме\n";
     }
-    // Влажность
-    if (humidity > 85) {
-        std::cout << "! АВАРИЯ: Высокая вероятность образования конденсата!\n";
+    // Уровень вибраций
+    if (vibration >= 6) {
+        std::cout << "! АВАРИЯ: Высокий уровень вибрации!\n";
         alarms++;
     }
-    else if (humidity > 75) {
-        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Риск образования конденсата!\n";
+    else if (vibration > 4 && vibration < 6) {
+        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Повышенный уровень вибрации!\n";
         warnings++;
     }
     else {
-        std::cout << "Влажность в норме\n";
+        std::cout << "Уровень вибрации в норме\n";
     }
-    // Напряжение
-    if (voltage < 220 || voltage > 100) {
-        std::cout << "! АВАРИЯ: Низкое напряжение в сети!\n";
-        alarms++;
-    }
-    else if (voltage < 350 || voltage > 410) {
-        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Авария по напряжению!\n";
-        warnings++;
-    }
-    else {
-        std::cout << "Напряжение в норме\n";
-    }
-    // Наработка
-    if (operating_hours > 1000) {
+    // Моточасы
+    if (moto_hours >= 800) {
         std::cout << "! АВАРИЯ: Необходимо ТО!\n";
         alarms++;
     }
-    else if (operating_hours > 500) {
+    else if (moto_hours > 500 && moto_hours < 800) {
         std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Необходимо ТО!\n";
         warnings++;
     }
@@ -102,6 +95,18 @@ int main() {
 
     std::cout << "\nКоличество предупреждений: " << std::left << std::setw(15) << warnings << "\n";
     std::cout << "Количество аварий:         " << std::left << std::setw(15) << alarms << "\n";
+
+    if (alarms > 0) {
+        std::cout << "ОСТАНОВКА! Требуется вмешательство\n";
+        is_running = false;
+    }
+    else if (alarms == 0 && warnings > 0) {
+        std::cout << "ВНИМАНИЕ! Плановое обслуживание\n";
+        is_running = false;
+    }
+    else {
+        std::cout << "НОРМАЛЬНАЯ РАБОТА\n";
+    }
 
     std::cout << "\nПрограмма завершена.\n";
     std::cout << "Нажмите Enter для выхода...";

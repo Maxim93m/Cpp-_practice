@@ -1,2 +1,3 @@
 ﻿  CppFromZero.cpp
+C:\Users\User\Desktop\РАБОТА\Cpp-_practice\CppIndustrialTraining\Day1\CppFromZero\CppFromZero\CppFromZero.cpp(13,27): warning C4305: инициализация: усечение из "double" в "float"
   CppFromZero.vcxproj -> C:\Users\User\Desktop\РАБОТА\Cpp-_practice\CppIndustrialTraining\Day1\CppFromZero\Debug\CppFromZero.exe
