@@ -12,6 +12,8 @@ int main() {
     int humidity = 75;
     float voltage = 380.0f;
     int operating_hours = 500;
+    int warnings = 0;
+    int alarms = 0;
 
     std::cout << "====================================================\n";
     std::cout << "              СИСТЕМА МОНИТОРИНГА\n";
@@ -24,26 +26,69 @@ int main() {
     std::cout << "Влажность:       " << std::left << std::setw(15) << humidity << " %\n";
     std::cout << "Напряжение:      " << std::left << std::setw(15) << voltage << " В\n";
     std::cout << "Наработка:       " << std::left << std::setw(15) << operating_hours << " ч\n";
-
-    if (temperature > 30.0f) {
-        std::cout << "\n! ВНИМАНИЕ: Перегрев оборудования!\n";
+    // Температура
+    if (temperature > 40.0f) {
+        std::cout << "\n! АВАРИЯ: Критический перегрев оборудования!\n";
+        alarms++;
     }
-
-    if (pressure > 120) {
-        std::cout << "! ВНИМАНИЕ: Высокое давление!\n";
+    else if (temperature > 30.0f) {
+        std::cout<< "\n! ПРЕДУПРЕЖДЕНИЕ: Перегрев оборудования!\n";
+        warnings++;
     }
-
+    else {
+        std::cout << "\nТемпература в норме\n";
+    }
+    // Давление
+    if (pressure > 220) {
+        std::cout << "! АВАРИЯ: Критически высокое давление!\n";
+        alarms++;
+    }
+    else if (pressure > 120) {
+        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Высокое давление!\n";
+        warnings++;
+    }
+    else {
+        std::cout << "Давление в норме\n";
+    }
+    // Влажность
     if (humidity > 85) {
-        std::cout << "! ВНИМАНИЕ: Конденсат!\n";
+        std::cout << "! АВАРИЯ: Высокая вероятность образования конденсата!\n";
+        alarms++;
     }
-    
-    if (voltage < 350 || voltage > 410) {
-        std::cout << "! АВАРИЯ: Авария по напряжению!\n";
+    else if (humidity > 75) {
+        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Риск образования конденсата!\n";
+        warnings++;
+    }
+    else {
+        std::cout << "Влажность в норме\n";
+    }
+    // Напряжение
+    if (voltage < 220 || voltage > 100) {
+        std::cout << "! АВАРИЯ: Низкое напряжение в сети!\n";
+        alarms++;
+    }
+    else if (voltage < 350 || voltage > 410) {
+        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Авария по напряжению!\n";
+        warnings++;
+    }
+    else {
+        std::cout << "Напряжение в норме\n";
+    }
+    // Наработка
+    if (operating_hours > 1000) {
+        std::cout << "! АВАРИЯ: Необходимо ТО!\n";
+        alarms++;
+    }
+    else if (operating_hours > 500) {
+        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Необходимо ТО!\n";
+        warnings++;
+    }
+    else {
+        std::cout << "Наработка в норме\n";
     }
 
-    if (operating_hours > 1000) {
-        std::cout << "! ВНИМАНИЕ: Необходимо ТО!\n";
-    }
+    std::cout << "\nКоличество предупреждений: " << std::left << std::setw(15) << warnings << "\n";
+    std::cout << "Количество аварий:         " << std::left << std::setw(15) << alarms << "\n";
 
     std::cout << "\nПрограмма завершена.\n";
     std::cout << "Нажмите Enter для выхода...";
