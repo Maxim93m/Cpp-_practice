@@ -46,7 +46,7 @@ int main() {
     checkValuePressure(pressure, warnings, alarms); // Давление воздуха
     checkValueVibration(vibration, warnings, alarms); // Уровень вибраций
     checkValueMotoHours(moto_hours, warnings, alarms); // Моточасы
-    checkStateFilter(moto_hours, alarms); // Состояние фильтра 
+    checkStateFilter(state_filter, alarms); // Состояние фильтра 
     
     is_running = (alarms == 0);
 
@@ -141,7 +141,7 @@ void checkValueVibration(float vibration, int& warnings, int& alarms) {
         std::cout << "! АВАРИЯ: Высокий уровень вибрации!\n";
         alarms++;
     }
-    else if (vibration > 4 && vibration <= 6) {
+    else if (vibration >= 4 && vibration <= 6) {
         std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Повышенный уровень вибрации!\n";
         warnings++;
     }
@@ -167,7 +167,7 @@ void checkValueMotoHours(int hours, int& warnings, int& alarms) {
 
 // Функция для проверки состояния фильтра
 void checkStateFilter(bool state, int& alarms) {
-    if (state) {
+    if (!state) {
         std::cout << "! АВАРИЯ: Фильтр загрязнён!\n";
         alarms++;
     }
