@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <string>
+#include <iomanip> // Для форматирования
 
 int main() {
     setlocale(LC_ALL, "Russian");
@@ -12,16 +13,17 @@ int main() {
     float voltage = 380.0f;
     int operating_hours = 500;
 
+    std::cout << "====================================================\n";
+    std::cout << "              СИСТЕМА МОНИТОРИНГА\n";
+    std::cout << "====================================================\n";
 
-    std::cout << "====================================\n";
-    std::cout << "МОНИТОРИНГ: " << equipment_name << "\n";
-    std::cout << "====================================\n";
-    std::cout << "Температура: " << temperature << " °C\n";
-    std::cout << "Давление:    " << pressure << " бар\n";
-    std::cout << "Состояние:   " << (is_running ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n";
-    std::cout << "Влажность: " << humidity << " %\n";
-    std::cout << "Напряжение: " << voltage << " В\n";
-    std::cout << "Наработка: " << operating_hours << " ч\n";
+    std::cout << "Оборудование:    " << std::left << std::setw(15) << equipment_name << "\n";
+    std::cout << "Температура      " << std::left << std::setw(15) << temperature << " °C\n";
+    std::cout << "Давление:        " << std::left << std::setw(15) << pressure << " бар\n";
+    std::cout << "Состояние:       " << std::left << std::setw(15) << (is_running ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n";
+    std::cout << "Влажность:       " << std::left << std::setw(15) << humidity << " %\n";
+    std::cout << "Напряжение:      " << std::left << std::setw(15) << voltage << " В\n";
+    std::cout << "Наработка:       " << std::left << std::setw(15) << operating_hours << " ч\n";
 
     if (temperature > 30.0f) {
         std::cout << "\n! ВНИМАНИЕ: Перегрев оборудования!\n";
