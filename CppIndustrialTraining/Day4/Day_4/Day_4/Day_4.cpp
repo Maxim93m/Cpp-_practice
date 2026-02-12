@@ -155,7 +155,7 @@ int getFilterInput(const std::string& prompt) {
 // Функция для проверки значения температуры
 void checkValueTemperature(float temperature, int& warnings, int& alarms, int index) {
     if (temperature <= 35 || temperature >= 70) {
-        std::string msg = "!АВАРИЯ: Критическое значение датчика температуры TE" + std::to_string(index + 1) + std::string("!\n");
+        std::string msg = "! АВАРИЯ: Критическое значение датчика температуры TE" + std::to_string(index + 1) + std::string("!\n");
         std::cout << msg;
         logEvents(msg);
         alarms++;
