@@ -97,7 +97,7 @@ int getCountTempSensors(const std::string& prompt) {
 float getFloatInput(const std::string& prompt) {
     float value;
     std::cout << prompt;
-    while (!(std::cin >> value)) {
+    while (!(std::cin >> value) || (value < 0)) {
         std::cout << "Ошибка! Введите число: ";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -109,7 +109,7 @@ float getFloatInput(const std::string& prompt) {
 int getIntInput(const std::string& prompt) {
     int value;
     std::cout << prompt;
-    while (!(std::cin >> value)) {
+    while (!(std::cin >> value) || (value < 0)) {
         std::cout << "Ошибка! Введите число: ";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -205,7 +205,7 @@ void printTable(int warnings, int alarms, const std::string& name,
     std::cout << std::left
         << std::setw(30) << "\nОборудование:" << std::setw(20) << name << "\n"
         << std::setw(30) << "Состояние установки:" << std::setw(20) << (isRunning ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n"
-        << std::setw(30) << "Температура масла:" << std::setw(20) << temp << " °C\n"
+        << std::setw(30) << "Средняя температура масла:" << std::setw(20) << temp << " °C\n"
         << std::setw(30) << "Давление воздуха:" << std::setw(20) << press << " бар\n"
         << std::setw(30) << "Уровень вибраций:" << std::setw(20) << vibr << " мм/с\n"
         << std::setw(30) << "Моточасы:" << std::setw(20) << hours << " ч\n"
