@@ -1,10 +1,15 @@
 ﻿#define NOMINMAX
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <string>
+#include <string> // Библиотека для работы со строками
 #include <iomanip> 
 #include <windows.h> 
 #include <limits>
 #include <vector>
+#include <fstream> // Библиотека для работы с файлами
+#include <chrono> // Библиотека для работы со временем
+#include <ctime> // Библиотека для преобразования времени
+
 
 // Прототипы функций
 float getFloatInput(const std::string& prompt); // Прототип функции для проверки ввода вещественных значений параметров
@@ -17,12 +22,14 @@ void checkValueMotoHours(int hours, int& warnings, int& alarms); // Протот
 void checkStateFilter(bool state, int& alarms); // Прототип функции для проверки состояния фильтра
 void printTable(int warnings, int alarms, const std::string& name, bool isRunning, float temp, int press, float vibr, int hours, bool stateFilter); // Прототип функции для отображения таблицы
 int getCountTempSensors(const std::string& prompt); // Прототип функции для ввода количества температурных датчиков
+void logEvents(const std::string& msg); // Прототип функции для логирования событий
+void createReport(int warnings, int alarms, const std::string& name, bool isRunning, float temp, int press, float vibr, int hours, bool stateFilter); // Прототип функции для создания файла отчёта о состоянии оборудования
 
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    std::string equipment_name = "Насос_Главный";
+    std::string equipment_name = "XXX";
     bool is_running;
     int warnings = 0;
     int alarms = 0;
@@ -72,13 +79,29 @@ int main() {
         std::cout << "\nНОРМАЛЬНАЯ РАБОТА\n";
     }
 
-    // Отображение значений параметров
+    // Отображение значений параметров системы
     printTable(warnings, alarms, equipment_name, is_running, temperature, pressure, vibration, moto_hours, state_filter);
+    // Отчёт по параметрам системы
+    createReport(warnings, alarms, equipment_name, is_running, temperature, pressure, vibration, moto_hours, state_filter);
 
     std::cout << "\nПрограмма завершена.\n";
     std::cout << "Нажмите Enter для выхода...";
     std::cin.get();
+
     return 0;
+}
+//<---------------------- ОПИСАНИЕ ФУНКЦИЙ -------------------------> //
+// Функция для логирования событий
+void logEvents(const std::string& msg) {
+    std::ofstream file("monitoring.log", std::ios::app);
+    if (file.is_open()) {
+        auto now = std::chrono::system_clock::now();
+        auto time = std::chrono::system_clock::to_time_t(now);
+        std::string time_str = std::ctime(&time);
+        time_str.pop_back();
+        file << time_str << ": " << msg;
+        file.close();
+    }
 }
 
 // Функция для ввода количества температурных датчиков
@@ -132,74 +155,103 @@ int getFilterInput(const std::string& prompt) {
 // Функция для проверки значения температуры
 void checkValueTemperature(float temperature, int& warnings, int& alarms, int index) {
     if (temperature <= 35 || temperature >= 70) {
-        std::cout << "! АВАРИЯ: Критическое значение датчика температуры TE" << index + 1 << "!\n";
+        std::string msg = "!АВАРИЯ: Критическое значение датчика температуры TE" + std::to_string(index + 1) + std::string("!\n");
+        std::cout << msg;
+        logEvents(msg);
         alarms++;
     }
     else if ((temperature > 60 && temperature < 70) || (temperature > 35 && temperature < 40)) {
-        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Недопустимое значение датчика температуры TE" << index + 1 << "!\n";
+        std::string msg = "! ПРЕДУПРЕЖДЕНИЕ: Недопустимое значение датчика температуры TE" + std::to_string(index + 1) + std::string("!\n");
+        std::cout << msg;
         warnings++;
+        logEvents(msg);
     }
     else {
-        std::cout << "Температура с датчика ТЕ" << index + 1 << " в норме\n"; // 40-60 °C
+        std::string msg = "Температура с датчика ТЕ" + std::to_string(index + 1) + std::string(" в норме\n");
+        std::cout << msg; // 40-60 °C
+        logEvents(msg);
     }
 }
 
 // Функция для проверки значения давления
 void checkValuePressure(int pressure, int& warnings, int& alarms) {
     if (pressure < 5 || pressure > 9) {
-        std::cout << "! АВАРИЯ: Критическое давление!\n";
+        std::string msg = "! АВАРИЯ: Критическое давление!\n";
+        std::cout << msg;
+        logEvents(msg);
         alarms++;
     }
     else if (pressure < 6 || pressure > 8) {
-        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Давление вне нормы!\n";
+        std::string msg = "! ПРЕДУПРЕЖДЕНИЕ: Давление вне нормы!\n";
+        std::cout << msg;
+        logEvents(msg);
         warnings++;
     }
     else {
-        std::cout << "Давление в норме\n";
+        std::string msg = "Давление в норме\n";
+        std::cout << msg;
+        logEvents(msg);
     }
 }
 
 // Функция для проверки значения уровня вибрации
 void checkValueVibration(float vibration, int& warnings, int& alarms) {
     if (vibration > 6) {
-        std::cout << "! АВАРИЯ: Высокий уровень вибрации!\n";
+        std::string msg = "! АВАРИЯ: Высокий уровень вибрации!\n";
         alarms++;
+        std::cout << msg;
+        logEvents(msg);
     }
     else if (vibration >= 4 && vibration <= 6) {
-        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Повышенный уровень вибрации!\n";
+        std::string msg = "! ПРЕДУПРЕЖДЕНИЕ: Повышенный уровень вибрации!\n";
         warnings++;
+        std::cout << msg;
+        logEvents(msg);
     }
     else {
-        std::cout << "Уровень вибрации в норме\n";
+        std::string msg = "Уровень вибрации в норме\n";
+        std::cout << msg;
+        logEvents(msg);
     }
 }
 
 // Функция для проверки значения моточасов
 void checkValueMotoHours(int hours, int& warnings, int& alarms) {
     if (hours > 800) {
-        std::cout << "! АВАРИЯ: Необходимо ТО!\n";
+        std::string msg = "! АВАРИЯ: Необходимо ТО!\n";
         alarms++;
+        std::cout << msg;
+        logEvents(msg);
     }
     else if (hours >= 500) {
-        std::cout << "! ПРЕДУПРЕЖДЕНИЕ: Необходимо ТО!\n";
+        std::string msg = "! ПРЕДУПРЕЖДЕНИЕ: Необходимо ТО!\n";
         warnings++;
+        std::cout << msg;
+        logEvents(msg);
     }
     else {
-        std::cout << "Наработка в норме\n";
+        std::string msg = "Наработка в норме\n";
+        std::cout << msg;
+        logEvents(msg);
     }
 }
 
 // Функция для проверки состояния фильтра
 void checkStateFilter(bool state, int& alarms) {
     if (!state) {
-        std::cout << "! АВАРИЯ: Фильтр загрязнён!\n";
+        std::string msg = "! АВАРИЯ: Фильтр загрязнён!\n";
         alarms++;
+        std::cout << msg;
+        logEvents(msg);
     }
 }
 
 // Функция для отображения таблицы
 void printTable(int warnings, int alarms, const std::string& name,
     bool isRunning, float temp, int press, float vibr, int hours, bool stateFilter) {
+    std::cout << "========================================\n";
+    std::cout << "   ОТЧЁТ ПО КОМПРЕССОРНОЙ УСТАНОВКЕ    \n";
+    std::cout << "========================================\n";
     std::cout << "\nКоличество предупреждений: " << std::left << std::setw(15) << warnings << "\n";
     std::cout << "Количество аварий:         " << std::left << std::setw(15) << alarms << "\n";
     std::cout << std::left
@@ -210,4 +262,25 @@ void printTable(int warnings, int alarms, const std::string& name,
         << std::setw(30) << "Уровень вибраций:" << std::setw(20) << vibr << " мм/с\n"
         << std::setw(30) << "Моточасы:" << std::setw(20) << hours << " ч\n"
         << std::setw(30) << "Состояние фильтра:" << std::setw(20) << (stateFilter ? "ЧИСТЫЙ" : "ЗАГРЯЗНЁН") << "\n";
+}
+
+// Функция для создания файла отчёта о состоянии оборудования
+void createReport(int warnings, int alarms, const std::string& name,
+    bool isRunning, float temp, int press, float vibr, int hours, bool stateFilter) {
+    std::ofstream file("report.txt");
+    if (file.is_open()) {
+        file << "========================================\n";
+        file << "   ОТЧЁТ ПО КОМПРЕССОРНОЙ УСТАНОВКЕ    \n";
+        file << "========================================\n";
+        file << "\nКоличество предупреждений: " << std::left << std::setw(15) << warnings << "\n";
+        file << "Количество аварий:         " << std::left << std::setw(15) << alarms << "\n";
+        file << std::left
+            << std::setw(30) << "\nОборудование:" << std::setw(20) << name << "\n"
+            << std::setw(30) << "Состояние установки:" << std::setw(20) << (isRunning ? "РАБОТАЕТ" : "ОСТАНОВ") << "\n"
+            << std::setw(30) << "Средняя температура масла:" << std::setw(20) << temp << " °C\n"
+            << std::setw(30) << "Давление воздуха:" << std::setw(20) << press << " бар\n"
+            << std::setw(30) << "Уровень вибраций:" << std::setw(20) << vibr << " мм/с\n"
+            << std::setw(30) << "Моточасы:" << std::setw(20) << hours << " ч\n"
+            << std::setw(30) << "Состояние фильтра:" << std::setw(20) << (stateFilter ? "ЧИСТЫЙ" : "ЗАГРЯЗНЁН") << "\n";
+    }
 }
