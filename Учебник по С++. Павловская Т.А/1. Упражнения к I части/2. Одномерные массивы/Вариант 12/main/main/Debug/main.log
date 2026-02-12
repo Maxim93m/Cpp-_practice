@@ -1,0 +1,4 @@
+﻿  main.cpp
+C:\Users\User\Desktop\РАБОТА\Cpp-_practice\Учебник по С++. Павловская Т.А\1. Упражнения к I части\2. Одномерные массивы\Вариант 12\main\main\main.cpp(63,41): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+C:\Users\User\Desktop\РАБОТА\Cpp-_practice\Учебник по С++. Павловская Т.А\1. Упражнения к I части\2. Одномерные массивы\Вариант 12\main\main\main.cpp(65,30): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+  main.vcxproj -> C:\Users\User\Desktop\РАБОТА\Cpp-_practice\Учебник по С++. Павловская Т.А\1. Упражнения к I части\2. Одномерные массивы\Вариант 12\main\Debug\main.exe
